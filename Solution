@@ -1,0 +1,100 @@
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.Collections;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
+using System.Text;
+using System;
+
+class Solution {
+
+    // Complete the appendAndDelete function below.
+    static string appendAndDelete(string s, string t, int k) {
+        char[] input = s.ToCharArray();
+        char[] answer = t.ToCharArray();
+        int max = 0;
+        int count = 0;
+        int diff = 0;
+        int same = 0;
+
+        //assign highest length and diffrence between them. Use to calcualate operations
+        if (input.Length > answer.Length){
+            max = answer.Length; 
+            diff = input.Length - answer.Length;  
+        } else {
+            max = input.Length;
+            diff = answer.Length - input.Length;
+        }
+
+        for(int a = max -1; a >= 0; a--){
+            if (input[a] != answer[a]){
+                count++;
+                count = count + same;
+                same= 0;
+            }else {
+                same = same + 1;
+            }
+        }
+        //if theres more than answer we can delete the whole answer and add until we run out of operations
+        if (answer.Length * 2 < k){
+            return "Yes";
+        } else if ((answer.Length + input.Length) - k == 1){
+            return "No";
+        }
+        count = count + diff;
+        
+        count = count + answer.Length - same; 
+        if (input.Length > answer.Length){
+            if ( diff > k){
+                return "No";
+            }
+        } else if (answer.Length > input.Length){
+            if (diff > k){
+                return "No";
+            }
+        } 
+
+        if (same == answer.Length){
+            diff = k - same;
+            if (same + input.Length <= k){
+                count = k;
+            } // check if the extra operations are even
+            if ((max - same) % 2 == 0){
+                count = k;
+            } else {
+                return "No";
+            }
+           
+        }
+        
+        // Finall Answer print. After adding all count we check if its equal to required K 
+        if (count == k){
+            return "Yes" ;
+        } else {
+            return "No" ;
+        }
+    }
+
+    static void Main(string[] args) {
+        TextWriter textWriter = new StreamWriter(@System.Environment.GetEnvironmentVariable("OUTPUT_PATH"), true);
+
+        string s = Console.ReadLine();
+
+        string t = Console.ReadLine();
+
+        int k = Convert.ToInt32(Console.ReadLine());
+
+        string result = appendAndDelete(s, t, k);
+
+        textWriter.WriteLine(result);
+
+        textWriter.Flush();
+        textWriter.Close();
+    }
+}
